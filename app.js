@@ -9,17 +9,73 @@ GAME RULES:
 
 */
 
-var scores, roundScore, activePlayer, dice;
-scores = [0, 0]; // Total Score of Player1 scores[0], and Player2 scores[1]
-roundScore = 0; // Score in every time the dice roll
-activePlayer = 0; //0 = Player1, 1 = Player2
-dice = Math.floor(Math.random() * 6) + 1; //random number of the Dice
-console.log(dice);
+var scores, activePlayer, dice, winning_score;
 
-document.querySelector('#current-' + activePlayer).textContent = dice;
-// document.querySelector('#current-' + activePlayer).innerHTML ='<em>' + dice + '</em>';
+init();
 
-var x = document.querySelector('#score-' + activePlayer).textContent;
+document
+  .querySelector('.btn-new')
+  .addEventListener('click', handleButtonNewClick);
 
-document.querySelector('.dice').style.display = 'none';
-document.querySelector('.btn-roll').addEventListener('click');
+document
+  .querySelector('.btn-roll')
+  .addEventListener('click', handleButtonRollClick);
+
+document
+  .querySelector('.btn-hold')
+  .addEventListener('click', handleButtonHoldClick);
+
+function handleButtonRollClick() {
+  dice = Math.floor(Math.random() * 6) + 1; //random number of the Dice
+  var diceDOM = document.querySelector('.dice');
+  diceDOM.src = 'dice-' + dice + '.png';
+  diceDOM.style.display = 'block';
+
+  if (dice !== 1) {
+    scores[activePlayer] += dice;
+    document.getElementById('score-' + activePlayer).innerHTML =
+      scores[activePlayer];
+    document.getElementById('current-' + activePlayer).innerHTML = dice;
+
+    /***WINNING CONDITION ****/
+    if (scores[activePlayer] > winning_score) {
+      document.getElementById('name-' + activePlayer).textContent = 'Winner';
+      diceDOM.style.display = 'none';
+    }
+  } else {
+    scores[activePlayer] = 0;
+    document.getElementById('score-' + activePlayer).innerHTML = '0';
+    document.getElementById('current-' + activePlayer).innerHTML = '0';
+    changePlayer();
+  }
+}
+
+function handleButtonHoldClick() {
+  changePlayer();
+}
+
+function changePlayer() {
+  if (activePlayer == 0) {
+    activePlayer = 1;
+  } else {
+    activePlayer = 0;
+  }
+  document.querySelector('.player-1-panel').classList.toggle('active');
+  document.querySelector('.player-0-panel').classList.toggle('active');
+  document.querySelector('.dice').style.display = 'none';
+}
+
+function handleButtonNewClick() {
+  init();
+}
+
+function init() {
+  scores = [0, 0]; // Total Score of Player1 scores[0], and Player2 scores[1]
+  activePlayer = 0; //0 = Player1, 1 = Player2
+  winning_score = 20;
+
+  document.getElementById('score-0').textContent = '0';
+  document.getElementById('score-1').textContent = '0';
+  document.getElementById('current-0').textContent = '0';
+  document.getElementById('current-1').textContent = '0';
+}
